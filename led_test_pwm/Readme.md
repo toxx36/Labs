@@ -1,0 +1,3 @@
+- Using HW PWM
+- Press user button to increase duty value
+- Each LED toggles every second at the discovery board via TIM2 IRQ

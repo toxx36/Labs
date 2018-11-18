@@ -24,6 +24,17 @@ void PWM(uint8_t duty, uint16_t pin, uint16_t dly)
 	}
 }
 
+
+void TIM2_IRQHandler()
+{
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update))
+    {
+	GPIO_ToggleBits(GPIOD,GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);   
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+    }
+}
+
+
 int main(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -69,6 +80,32 @@ int main(void)
 
   int8_t button, cycle, move = 0;
   uint8_t duty = 0;
+
+
+//Update Event (Hz) = timer_clock / ((TIM_Prescaler + 1) * (TIM_Period + 1)) == 1 HZ
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+  TIM_TimeBaseInitTypeDef TimBaseInit;
+  TimBaseInit.TIM_Prescaler = 42000-1;
+  TimBaseInit.TIM_CounterMode = TIM_CounterMode_Up;
+  TimBaseInit.TIM_Period = 2000-1;
+  TimBaseInit.TIM_ClockDivision = 0;
+  
+  TIM_TimeBaseInit(TIM2, &TimBaseInit);
+  
+  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+
+//IT config
+  NVIC_InitTypeDef NVIC_InitStruct;
+  NVIC_InitStruct.NVIC_IRQChannel = TIM2_IRQn;
+  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStruct);
+ 
+
+  TIM_Cmd(TIM2,ENABLE);
+
+
 
   while (1) {
 	button = GPIO_ReadInputDataBit(GPIOE, BTN_INC_PIN)-GPIO_ReadInputDataBit(GPIOE, BTN_DEC_PIN);

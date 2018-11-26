@@ -1,8 +1,6 @@
 #ifndef LEDS_AND_BUTTON_H
 #define LEDS_AND_BUTTON_H
 
-#include <stm32f4xx.h>
-
 /* #if defined (USE_STM324xG_EVAL) */
 /*   #include "stm324xg_eval.h" */
 

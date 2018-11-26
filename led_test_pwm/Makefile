@@ -1,5 +1,5 @@
 BUILD_ROOT=../..
-OBJS = main.o
+OBJS = main.o init.o irq.o delay.o globals.o
 
 BINARY_NAME = main
 

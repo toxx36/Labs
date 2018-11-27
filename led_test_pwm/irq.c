@@ -13,7 +13,7 @@ void IRQ_EXTI_color(void) {
 			(((color & (1 << 1))?1:0) * ((intens * intens) / TIM_PERIOD)));
 	TIM_SetCompare3(TIM1,
 			(((color & (2 << 1))?1:0) * ((intens * intens) / TIM_PERIOD)));
-    }
+}
 
 void IRQ_EXTI_intens(void) {
 	GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
@@ -31,4 +31,3 @@ void IRQ_EXTI_intens(void) {
 void IRQ_TIM_LEDFlash(void) {
 	GPIO_ToggleBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_14);
 }
-    

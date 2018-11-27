@@ -108,7 +108,7 @@ void init_all(void) {
 
 	NVIC_InitStruct.NVIC_IRQChannel = EXTI1_IRQn;
 	NVIC_Init(&NVIC_InitStruct);
-	
+
 	//light up at first time
 	TIM_SetCompare1(TIM1, ((color & 1)?1:0) * ((intens * intens) / TIM_PERIOD) );
 	TIM_SetCompare2(TIM1,

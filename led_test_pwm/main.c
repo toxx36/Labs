@@ -5,10 +5,10 @@
 #include "globals.h"
 #include "delay.h"
 
-int32_t intensity = INTENSITY_STEP_COUNT;
-uint16_t rgb[3] = {MAX_INTENSITY, 0, 0};
-int8_t cycle = 0;
-int8_t direction = 1;
+int32_t intensity;
+uint16_t rgb[3];
+int8_t cycle;
+int8_t direction;
 
 void TIM2_IRQHandler() {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update)) {
@@ -36,6 +36,12 @@ void EXTI1_IRQHandler(void) {
 }
 
 int main(void) {
+    intensity = INTENSITY_STEP_COUNT;
+    rgb[0] = MAX_INTENSITY;
+    rgb[1] = 0;
+    rgb[2] = 0;
+    cycle = 0;
+    direction = 1;
 	init_all();
 	LED_set_color(rgb,&intensity);
 	while (1) { 

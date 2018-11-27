@@ -1,3 +1,5 @@
-- Using HW PWM
-- Press user button to increase duty value
-- Each LED toggles every second at the discovery board via TIM2 IRQ
+- Using HW PWM TIM1
+- Hold left button (PE0) to change color
+- Press right button (PE1) to change intensity
+- Hold black user button (PA0) on the main board before pressing buttons to reverse direction of changing
+- Two LEDs toggles every second on the main board via TIM2 IRQ

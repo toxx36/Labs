@@ -21,6 +21,7 @@ include $(BUILD_ROOT)/common_defs.mk
 $(BINARY_NAME): $(LIB) $(BINARY_NAME).bin
 
 $(LIB): $(LIB_OBJS)
+	mkdir -p $(@D)
 	@echo "Linking library $@"
 	$(MAKE_LIBRARY)
 

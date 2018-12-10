@@ -28,7 +28,7 @@ void EXTI1_IRQHandler(void) {
 		//IRQ_EXTI_intens();
 		direction = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) ? -1 : 1;
 		LED_change_intensity(&intensity, &direction);
-		LED_set_color(rgb,&intensity);
+		LED_set_color_raw(rgb,&intensity);
 		delay(MS_1*20); //bad idea
 		EXTI_ClearITPendingBit(EXTI_Line1);
 	}
@@ -42,14 +42,14 @@ int main(void) {
     rgb[2] = 0;
     direction = 1;
 	init_all();
-	LED_set_color(rgb,&intensity);
+	LED_set_color_raw(rgb,&intensity);
 	
 	while (1) { 
 		if(!GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_0))
 		{
 			direction = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) ? -1 : 1;
 			LED_change_color(rgb, &direction);//, &cycle);
-			LED_set_color(rgb,&intensity);
+			LED_set_color_raw(rgb,&intensity);
 			delay(US_350);
 		}
 	}

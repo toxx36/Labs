@@ -1,7 +1,7 @@
 #include "led.h"
 #include "globals.h"
 
-volatile int8_t cycle;
+int8_t cycle;
 
 void LED_init(void) {
 	cycle = 0;
@@ -30,8 +30,23 @@ uint16_t LED_calc_color(uint16_t *value, int32_t *intensity) {
 			( (( (uint32_t)(*value) * (*value) / INTENSITY_STEP_COUNT) * (*intensity)) / MAX_INTENSITY);
 }
 
-void LED_set_color(uint16_t *rgb,int32_t *intensity) {		
+void LED_set_color_raw(uint16_t *rgb,int32_t *intensity) {		
 	TIM_SetCompare1(TIM1, LED_calc_color(rgb,intensity));
 	TIM_SetCompare2(TIM1, LED_calc_color(rgb+1,intensity));
 	TIM_SetCompare3(TIM1, LED_calc_color(rgb+2,intensity));
+}
+
+void LED_set_color_HEX(uint32_t color, int32_t intensity) {
+	uint8_t rgb[3];
+	rgb[0] = color>>16;
+	rgb[1] = (color>>8)&0xFF;
+	rgb[2] = color&0xFF;
+}
+
+void LED_set_color_RGB(uint16_t *color, int32_t intensity) {
+	
+}
+
+void LED_8bit_conversion(uint32_t *value) {
+	
 }

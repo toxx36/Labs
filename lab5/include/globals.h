@@ -11,7 +11,7 @@
 #define MS_1 168000
 #define US_350 58800
 
-extern volatile uint32_t intens;
-extern volatile uint32_t color;
+extern uint32_t intens;
+extern uint32_t color;
 
 #endif

@@ -1,13 +1,10 @@
 #include "main.h"
 
-#define TIM_PERIOD 2000
-#define SEC_1 TIM_PERIOD-1
 #define LED_COUNT 4
 #define LED_FIRST_PIN GPIO_Pin_12
 #define LED_PORT GPIOD
 
 void init(void);
-uint8_t delay_tim(uint32_t);
 void LED_switch(uint8_t);
 
 int main(void)
@@ -18,7 +15,8 @@ int main(void)
 	
 	while (1) {
 	if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == 1) turn = 1; //read button state
-	if(delay_tim(SEC_1)) { //IF for button detection between toggles
+	if(TIM_GetFlagStatus(TIM2,TIM_FLAG_Update)) { //IF for button detection between toggles
+		TIM_ClearFlag(TIM2,TIM_FLAG_Update);
 		LED_switch(turn); //toggle when delay triggered
 		turn = 0;
 	}
@@ -58,14 +56,6 @@ void init(void) {
 	TimBaseInit.TIM_ClockDivision = 0;
 	TIM_TimeBaseInit(TIM2, &TimBaseInit);
 	TIM_Cmd(TIM2,ENABLE);
-}
-
-uint8_t delay_tim(uint32_t time) {
-	if(TIM_GetCounter(TIM2) == time) {
-		TIM_SetCounter(TIM2,0); //for triggering one time
-		return 1;
-	}
-	return 0;
 }
 
 void LED_switch(uint8_t turn) {

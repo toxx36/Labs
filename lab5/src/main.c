@@ -1,56 +1,48 @@
 #include "main.h"
 #include "init.h"
-#include "irq.h"
 #include "led.h"
 #include "globals.h"
 #include "delay.h"
 
 int32_t intensity;
-uint16_t rgb[3];
 int8_t direction;
+
 
 void TIM2_IRQHandler() {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update)) {
-		IRQ_TIM_LEDFlash();
+		//
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	}
 }
 
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
-		//IRQ_EXTI_color();
+		//
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}
 }
 
 void EXTI1_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
-		//IRQ_EXTI_intens();
-		direction = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) ? -1 : 1;
-		LED_change_intensity(&intensity, &direction);
-		LED_set_color_raw(rgb,&intensity);
-		delay(MS_1*20); //bad idea
+		LED_set_intensity(intensity);
+		intensity++;
+		if(intensity >= INTENSITY_STEP_COUNT) intensity = 1;
 		EXTI_ClearITPendingBit(EXTI_Line1);
 	}
 }
 
 int main(void) {
-	LED_init();
-    intensity = INTENSITY_STEP_COUNT;
-    rgb[0] = MAX_INTENSITY;
-    rgb[1] = 0;
-    rgb[2] = 0;
-    direction = 1;
+	uint32_t hex_array[] = {0xe6194B,0x3cb44b,0xffe119,0x4363d8,0xf58231,0x911eb4,0x42d4f4,0xf032e6,0xbfef45,0xfabebe,0x469990,0xe6beff,0x9A6324,0x808000,0xffd8b1,0xffffff};
+	uint32_t size = sizeof(hex_array)/sizeof(hex_array[0]);
+	uint32_t i = 0;
+	intensity = INTENSITY_STEP_COUNT;
 	init_all();
-	LED_set_color_raw(rgb,&intensity);
+	LED_init();
 	
-	while (1) { 
-		if(!GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_0))
-		{
-			direction = GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) ? -1 : 1;
-			LED_change_color(rgb, &direction);//, &cycle);
-			LED_set_color_raw(rgb,&intensity);
-			delay(US_350);
-		}
+	while (1) {
+		LED_set_color_HEX(hex_array[i]);
+		i++;
+		if(i >= size) i = 0;
+		delay(MS_1*50);
 	}
 }

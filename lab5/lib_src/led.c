@@ -1,52 +1,48 @@
 #include "led.h"
 #include "globals.h"
 
-int8_t cycle;
+static uint16_t intens;
+static uint16_t rgb_curr[3];
 
 void LED_init(void) {
-	cycle = 0;
+	rgb_curr[0] = 0;
+	rgb_curr[1] = 0;
+	rgb_curr[2] = 0;
+	LED_set_intensity(INTENSITY_STEP_COUNT);
 }
 
-void LED_change_color(uint16_t *rgb, int8_t *direction) {
-	uint8_t current_color = (1+cycle/2-cycle%2)%3;
-	int8_t move = *direction * (!(cycle%2)-cycle%2);
-	rgb[current_color]+=move;
-	if((rgb[current_color]==MAX_INTENSITY && move>0) || (rgb[current_color]==0 && move<0))
-	{
-		cycle += *direction;
-		if(cycle>5) cycle = 0;
-		else if(cycle<0) cycle = 5;
+uint16_t LED_calc_color(uint16_t *value) {
+	return 	(intens == INTENSITY_STEP_COUNT) ?
+				(*value == MAX_INTENSITY) ? MAX_INTENSITY : //intens is max & brightness is max
+				( (uint32_t)(*value) * (*value) / MAX_INTENSITY) : //intens is max 
+			( ( ((uint32_t)(*value) * (*value) / INTENSITY_STEP_COUNT) * (intens)) / MAX_INTENSITY); //other case
+}
+
+void LED_set_intensity(uint16_t intensity) {
+	intens = intensity;
+	LED_set_color_raw(rgb_curr);
+}
+
+void LED_set_color_raw(uint16_t *rgb) {	
+	TIM_SetCompare1(TIM1, LED_calc_color(rgb));
+	TIM_SetCompare2(TIM1, LED_calc_color(rgb+1));
+	TIM_SetCompare3(TIM1, LED_calc_color(rgb+2));
+}
+
+void LED_set_color_RGB(uint8_t *color) {
+	uint8_t i;
+	for(i=0;i<3;i++) {
+		if(color[i] == 0) rgb_curr[i] = 0;
+		else if(color[i] == 0xFF) rgb_curr[i] = MAX_INTENSITY;
+		else rgb_curr[i] = (MAX_INTENSITY * color[i]) / 0xFF;
 	}
+	LED_set_color_raw(rgb_curr);
 }
 
-void LED_change_intensity(int32_t *intensity, int8_t *direction) {
-	*intensity += *direction;
-	if(*intensity > INTENSITY_STEP_COUNT) *intensity = MIN_INTENSITY;
-	else if(*intensity < MIN_INTENSITY) *intensity = INTENSITY_STEP_COUNT;
-}
-
-uint16_t LED_calc_color(uint16_t *value, int32_t *intensity) {
-	return ((*value == MAX_INTENSITY) && (*intensity == INTENSITY_STEP_COUNT)) ? MAX_INTENSITY :
-			( (( (uint32_t)(*value) * (*value) / INTENSITY_STEP_COUNT) * (*intensity)) / MAX_INTENSITY);
-}
-
-void LED_set_color_raw(uint16_t *rgb,int32_t *intensity) {		
-	TIM_SetCompare1(TIM1, LED_calc_color(rgb,intensity));
-	TIM_SetCompare2(TIM1, LED_calc_color(rgb+1,intensity));
-	TIM_SetCompare3(TIM1, LED_calc_color(rgb+2,intensity));
-}
-
-void LED_set_color_HEX(uint32_t color, int32_t intensity) {
+void LED_set_color_HEX(uint32_t color) {
 	uint8_t rgb[3];
 	rgb[0] = color>>16;
 	rgb[1] = (color>>8)&0xFF;
 	rgb[2] = color&0xFF;
-}
-
-void LED_set_color_RGB(uint16_t *color, int32_t intensity) {
-	
-}
-
-void LED_8bit_conversion(uint32_t *value) {
-	
+	LED_set_color_RGB(rgb);
 }

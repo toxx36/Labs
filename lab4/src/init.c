@@ -110,11 +110,10 @@ void init_all(void) {
 	NVIC_Init(&NVIC_InitStruct);
 
 	//light up at first time
-	/*
 	TIM_SetCompare1(TIM1, ((color & 1)?1:0) * ((intens * intens) / TIM_PERIOD) );
 	TIM_SetCompare2(TIM1,
 			(((color & (1 << 1))?1:0) * ((intens * intens) / TIM_PERIOD)));
 	TIM_SetCompare3(TIM1,
 			(((color & (2 << 1))?1:0) * ((intens * intens) / TIM_PERIOD)));
-	*/
+
 }

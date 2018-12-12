@@ -9,5 +9,9 @@
 #define TIM_PERIOD 0xFF
 
 #define MS_1 168000
+#define US_350 58800
+
+extern volatile uint32_t intens;
+extern volatile uint32_t color;
 
 #endif

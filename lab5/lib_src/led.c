@@ -4,6 +4,11 @@
 static uint16_t intens;
 static uint16_t rgb_curr[3];
 
+/**
+	\brief Performs base init
+	
+	Variables resets, LED not lights
+*/
 void LED_init_val(void) {
 
 	rgb_curr[0] = 0;
@@ -12,6 +17,13 @@ void LED_init_val(void) {
 	LED_set_intensity(INTENSITY_STEP_COUNT);
 }
 
+/**
+	\brief Inits LED of the existing prototype
+	
+	\warning Use this func only if LED is connected to PA8-10 of TIM1 (OC outputs). If not, init it manually.
+	
+	Inits GPIO PA8-10 as AF TIM1, inits TIM1 OC1-3 for PWM output
+*/
 void LED_init_periph(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_StructInit(&GPIO_InitStructure);
@@ -34,7 +46,7 @@ void LED_init_periph(void) {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 	TIM_BaseStruct.TIM_Prescaler = 0x1500; //optimal for green
 	TIM_BaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_BaseStruct.TIM_Period = TIM_PERIOD; //!!!
+	TIM_BaseStruct.TIM_Period = TIM_PERIOD; 
 	TIM_BaseStruct.TIM_ClockDivision = 0;
 	TIM_BaseStruct.TIM_RepetitionCounter = 0;
 	TIM_TimeBaseInit(TIM1, &TIM_BaseStruct); // Initialize timer with chosen settings
@@ -60,6 +72,13 @@ void LED_init_periph(void) {
 	LED_init_val();
 }
 
+/**
+	\brief Preparing color value to output
+	
+	Change raw value of brightness to eye-likely and sets level of brightness depends of current intensity value
+	
+	\param raw color value
+*/
 uint16_t LED_calc_color(uint16_t *value) {
 	return 	(intens == INTENSITY_STEP_COUNT) ?
 				(*value == MAX_INTENSITY) ? MAX_INTENSITY : //intens is max & brightness is max
@@ -67,17 +86,33 @@ uint16_t LED_calc_color(uint16_t *value) {
 			( ( ((uint32_t)(*value) * (*value) / INTENSITY_STEP_COUNT) * (intens)) / MAX_INTENSITY); //other case
 }
 
+/**
+	\brief Sets total brightness
+	
+	May be used for dimming when the color temperature is set
+*/
 void LED_set_intensity(uint16_t intensity) {
 	intens = intensity;
 	LED_set_color_raw(rgb_curr);
 }
 
+/**
+	\brief Sets raw value of color
+	
+	Sets pulse width of PWM for 3 channels in eye-likely form
+	
+	\param *rgb array of Red, Green and Blue in raw form
+*/
 void LED_set_color_raw(uint16_t *rgb) {	
 	TIM_SetCompare1(USING_TIMER, LED_calc_color(rgb));
 	TIM_SetCompare2(USING_TIMER, LED_calc_color(rgb+1));
 	TIM_SetCompare3(USING_TIMER, LED_calc_color(rgb+2));
 }
 
+/**
+	\brief Sets color by RGB value
+	\param *color array of Red, Green and Blue colors in range of 0 to 255
+*/
 void LED_set_color_RGB(uint8_t *color) {
 	uint8_t i;
 	for(i=0;i<3;i++) {
@@ -88,6 +123,10 @@ void LED_set_color_RGB(uint8_t *color) {
 	LED_set_color_raw(rgb_curr);
 }
 
+/**
+	\brief Sets color by HEX color code
+	\param value where 0xRRGGBB consist of values of Red, Green and Blue respectively
+*/
 void LED_set_color_HEX(uint32_t color) {
 	uint8_t rgb[3];
 	rgb[0] = color>>16;

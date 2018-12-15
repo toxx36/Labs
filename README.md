@@ -1,10 +1,10 @@
 # Labs
 
-`lab1` - Init, LED blinking in rotation, button changes direction  
-`lab2` - LED blinking + Timer  
-`lab3` - LED blinking + Timer + IRQ  
-`lab4` - Using Timer PWM for LED color changing  
-`lab5` - Library for LED color setting (HEX, RGB) + API reference  
+[`Lab 1`](./lab1/) - Init, LED blinking in rotation, button changes direction  
+[`Lab 2`](./lab2/) - LED blinking + Timer  
+[`Lab 3`](./lab3/) - LED blinking + Timer + IRQ  
+[`Lab 4`](./lab4/) - Using Timer PWM for LED color changing  
+[`Lab 5`](./lab5/) - Library for LED color setting (HEX, RGB) + API reference  
  
-`led_test` - SW PWM  
-`led_test_pwm` - HW PWM via TIM1  
+[`led_test`](./led_test/) - SW PWM  
+[`led_test_pwm`](./led_test_pwm/) - HW PWM via TIM1  

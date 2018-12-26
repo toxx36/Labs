@@ -10,8 +10,8 @@
 #define CLICK_TIME 300
 
 //Count and names of buttons
-#define BTN_COUNT 1
-typedef enum {bBoard} Buttons;
+#define BTN_COUNT 3
+typedef enum {bBoard,bLeft,bRight} Buttons;
 
 void ButtonInit(void);
 void Buttons_IRQ(void);

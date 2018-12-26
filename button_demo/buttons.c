@@ -3,10 +3,10 @@
 typedef enum {bWaiting,bDebouncing,bClicksCounting,bHolding,bWaitRelease} ButtonsState; ///States of state machine
 
 ///The order matches the names of the buttons
-const uint16_t pins[] = 		{GPIO_Pin_0};
-const GPIO_TypeDef *ports[] = 	{GPIOA};
-const GPIOPuPd_TypeDef pupd[] = {GPIO_PuPd_DOWN};
-const uint32_t rcc[] = {RCC_AHB1Periph_GPIOA};
+const uint16_t pins[] = 		{GPIO_Pin_0,GPIO_Pin_0,GPIO_Pin_1};
+const GPIO_TypeDef *ports[] = 	{GPIOA,GPIOE,GPIOE};
+const GPIOPuPd_TypeDef pupd[] = {GPIO_PuPd_DOWN,GPIO_PuPd_UP,GPIO_PuPd_UP};
+const uint32_t rcc[] = {RCC_AHB1Periph_GPIOA,RCC_AHB1Periph_GPIOE};
 
 typedef struct button_state ///Contains all about button
 {
@@ -87,6 +87,7 @@ inline void ButtonInit(void)
 ///Button state machine which process each button
 void Button_FSM(Buttons cur) {
 	uint8_t cur_btn = GPIO_ReadInputDataBit(btns[cur].bPort,btns[cur].bPin); //read current btn state
+	if(pupd[cur] == GPIO_PuPd_UP) cur_btn ^= 1;
 	switch(btns[cur].bState) {
 	case bWaiting:
 		if(cur_btn) {
@@ -97,7 +98,6 @@ void Button_FSM(Buttons cur) {
 		if(btns[cur].bClickTimer != 0) {
 			if(btns[cur].bClickTimer >= CLICK_TIME) {
 				btns[cur].bClickTimer = 0;
-				//btns[cur].bClicks = 0;
 			}
 			else {
 				btns[cur].bClickTimer++;

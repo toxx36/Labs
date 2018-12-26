@@ -15,6 +15,11 @@ int main(void)
 	ButtonInit();
 
 	while (1) {
+	
+		GPIO_WriteBit(GPIOA,GPIO_Pin_8,!Button_onPress(bRight)); //RGB
+		GPIO_WriteBit(GPIOA,GPIO_Pin_9,!Button_onPress(bLeft));////LED
+		GPIO_WriteBit(GPIOA,GPIO_Pin_10,!Button_onPress(bBoard));//light up
+	
 		tmp = Button_getClicks(bBoard,1);
 		if(tmp == 5 && !Button_holded(bBoard,0)) {
 			mode ^= 1;
@@ -69,11 +74,11 @@ void init(void) {
 	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-	/* Init user button on discovery board */
+	/* Init RGB LED */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_0;
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);

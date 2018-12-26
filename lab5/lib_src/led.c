@@ -1,6 +1,11 @@
 #include "led.h"
 #include "globals.h"
 
+#define MAX_INTENSITY TIM_PERIOD
+
+void LED_set_color_raw(uint16_t *rgb);
+uint16_t LED_calc_color(uint16_t *value);
+
 static uint16_t intens;
 static uint16_t rgb_curr[3];
 
@@ -87,16 +92,6 @@ uint16_t LED_calc_color(uint16_t *value) {
 }
 
 /**
-	\brief Sets total brightness
-	
-	May be used for dimming when the color temperature is set
-*/
-void LED_set_intensity(uint16_t intensity) {
-	intens = intensity;
-	LED_set_color_raw(rgb_curr);
-}
-
-/**
 	\brief Sets raw value of color
 	
 	Sets pulse width of PWM for 3 channels in eye-likely form
@@ -107,6 +102,16 @@ void LED_set_color_raw(uint16_t *rgb) {
 	TIM_SetCompare1(USING_TIMER, LED_calc_color(rgb));
 	TIM_SetCompare2(USING_TIMER, LED_calc_color(rgb+1));
 	TIM_SetCompare3(USING_TIMER, LED_calc_color(rgb+2));
+}
+
+/**
+	\brief Sets total brightness
+	
+	May be used for dimming when the color temperature is set
+*/
+void LED_set_intensity(uint16_t intensity) {
+	intens = intensity;
+	LED_set_color_raw(rgb_curr);
 }
 
 /**

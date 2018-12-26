@@ -1,0 +1,1 @@
+This library is using for <span style="color:red">R</span><span style="color:green">G</span><span style="color:blue">B</span> LED control

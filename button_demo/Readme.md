@@ -1,4 +1,10 @@
+When a button pressed LEDs of RGB LED lights:
+- Left at the additional board - Green LED lights
+- Right at the additional board - Red LED lights
+- Blue at the main board - Blue LED lights
+
 __There are two modes of the indication; for switch between modes press the blue button _5 times quickly_.__
+
 ## Mode 1
 - Green LED toggle when the blue button was pressed
 - Orange LED lights if the button is on press
